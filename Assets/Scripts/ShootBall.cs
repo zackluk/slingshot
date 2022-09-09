@@ -14,11 +14,36 @@ public class ShootBall : MonoBehaviour
     private Vector3 initialGrabPosition;
     private Vector3 releasePosition;
 
+    private float time = 0;
     private Rigidbody rb;
+
+    private bool shot;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        if (shot)
+        {
+            var lapsedTime = Time.time - time;
+
+            if (lapsedTime >= 5)
+            {
+                time = Time.time;
+
+                this.gameObject.transform.localPosition = initialGrabPosition;
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+
+                shot = false;
+            }
+        }
+        else
+        {
+            time = Time.time;
+        }
     }
 
     public void OnGrab()
@@ -42,5 +67,6 @@ public class ShootBall : MonoBehaviour
     void Shoot()
     {
         rb.AddForce(-(force * power), ForceMode.Impulse);
+        shot = true;
     }
 }
